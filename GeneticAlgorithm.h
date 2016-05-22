@@ -3,45 +3,38 @@
 
 #include <string>
 #include <vector>
+#include <random>
 #include "Chromosome.h"
+
+
+struct GeneticAlgorithmParams{
+    const std::string sequence;
+    const unsigned long populationSize;
+    const unsigned long generations;
+    const double elitePercent;
+    const double crossoverPercent;
+    const double mutationPercent;
+};
+
 
 
 class GeneticAlgorithm {
 
-
 public:
-
-
-
-
-    GeneticAlgorithm(
-            const std::string &sequence,
-            unsigned long populationSize,
-            unsigned long generations,
-            double elitePercent,
-            double crossoverPercent,
-            double mutationPercent) :
-            sequence(sequence),
-            populationSize(populationSize),
-            generations(generations),
-            elitePercent(elitePercent),
-            crossoverPercent(crossoverPercent),
-            mutationPercent(mutationPercent) { }
+    static GeneticAlgorithmParams params;
+    GeneticAlgorithm(){
+    }
 
     void run();
 
+    void showTurnList();
+
+
 private:
-    std::string sequence;
-    unsigned long populationSize;
-    unsigned long generations = 200;
-    double elitePercent = .10;
-    double crossoverPercent = .80;
-    double mutationPercent;
-
     void createBasePopulation();
-
-
     std::vector<Chromosome> population;
+
+
 };
 
 

@@ -9,18 +9,25 @@ void GeneticAlgorithm::run() {
 
     createBasePopulation();
 
+    for (auto pop : population){
+        pop.printCoordinates();
+    }
+
+
 
 }
 
 void GeneticAlgorithm::createBasePopulation() {
 
-    population.resize(populationSize);
 
-    for (auto chromo : population){
+    population.resize(params.populationSize);
+
+    for (auto chrom : population){
         std::cout << "A";
     }
-
 }
+
+
 
 
 

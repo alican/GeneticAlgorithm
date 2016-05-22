@@ -18,10 +18,18 @@ std::string SEQ36 = "000110011000001111111001100001100100";
 std::string SEQ48 = "001001100110000011111111110000001100110010011111";
 std::string SEQ50 = "11010101011110100010001000010001000101111010101011";
 
+
+GeneticAlgorithmParams GeneticAlgorithm::params = {
+        SEQ20,
+        1,
+        10,
+        0.10,
+        0.25,
+        0.25
+};
+
 int main() {
-
-
-    GeneticAlgorithm geneticAlgorithm = GeneticAlgorithm(SEQ20, 5, 10, 0.10, 0.25, 0.25);
+    GeneticAlgorithm geneticAlgorithm = GeneticAlgorithm();
 
     geneticAlgorithm.run();
 

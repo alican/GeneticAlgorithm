@@ -9,7 +9,50 @@
 #include <string>
 #include <list>
 
-enum TURNCODE { LEFT, RIGHT, FORWARD };
+enum TURNCODE { LEFT = -1, FORWARD = 0, RIGHT = 1 };
+enum FACING { NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3 };
+enum HP { HYDROPHIL, HYDROPHOB };
+
+
+struct Coordinate {
+    int x, y;   // (0,0)
+    FACING facing = NORTH;
+    HP polarisation;
+
+    std::string representation(){
+        return "(" + std::to_string(x) + "," + std::to_string(y) + ")";
+    }
+    void turnTo(TURNCODE turn){
+        /*        N = 0
+         *    W = 3    E = 1
+         *        S = 2
+         */
+        int newFacing = facing + turn;
+        if (newFacing == 4){
+            newFacing = 0;
+        }
+        if (newFacing == -1){
+            newFacing = 3;
+        }
+        facing = (FACING) newFacing;
+
+        switch (facing){
+            case NORTH:
+                y += 1;
+                break;
+            case EAST:
+                x += 1;
+                break;
+            case SOUTH:
+                y -= 1;
+                break;
+            case WEST:
+                x -= 1;
+                break;
+        }
+
+    }
+};
 
 
 class Chromosome {
@@ -18,10 +61,12 @@ public:
 
 
     Chromosome();
+    void printCoordinates();
+
 
 private:
 
-
+    void createRandomTurnList();
 
     void crossover(Chromosome chromosome);
     void crossover(int pos, Chromosome chromosome);
@@ -30,7 +75,10 @@ private:
     double fitness;
 
     std::list<TURNCODE> turnList;
-    std::list<std::pair<int, int>> coordinates;
+    std::list<Coordinate> path;
+
+    void createCoordinatePath(Coordinate start);
+
 };
 
 
