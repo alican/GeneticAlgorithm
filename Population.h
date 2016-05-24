@@ -6,15 +6,42 @@
 
 #include "Chromosome.h"
 #include <vector>
+#include <iostream>
 
 class Population {
+
+
+public:
+
+
+    Population() { }
+
+    Population(unsigned long size) {
+
+        for (int i = 0; i < size; i++){
+            Chromosome chrom;
+            chrom.createRandomTurnList();
+            chrom.process();
+            chromosomes.push_back(chrom);
+        }
+    }
+
+    Population(std::vector<Chromosome> selection){
+        chromosomes = selection;
+    }
+
+    Population selection();
+    void crossover(double crossover_rate);
+
+    void mutation();
+
+    void printChromos();
 
 public:
     double averageFitness;
 
 private:
-    std::vector<Chromosome> genoTypeList;
-
+    std::vector<Chromosome> chromosomes;
 
 
 };

@@ -5,6 +5,7 @@
 #include <vector>
 #include <random>
 #include "Chromosome.h"
+#include "Population.h"
 
 
 struct GeneticAlgorithmParams{
@@ -24,17 +25,14 @@ public:
     static GeneticAlgorithmParams params;
     GeneticAlgorithm(){
     }
-
     void run();
-
     void showTurnList();
 
-
 private:
-    void createBasePopulation();
-    std::vector<Chromosome> population;
+    Population createBasePopulation();
+    std::vector<Population> population;
 
-
+    bool keepGoing();
 };
 
 

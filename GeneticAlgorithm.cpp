@@ -7,25 +7,37 @@
 
 void GeneticAlgorithm::run() {
 
-    createBasePopulation();
+    Population p = createBasePopulation();
+    population.push_back(p);
 
-    for (auto pop : population){
-        pop.printCoordinates();
+    double Fitness = 0.001;
+    int generation = 0;
+
+    while(generation < params.generations){
+        generation++;
+        p = p.selection();
+        p.crossover(params.crossoverPercent);
+        p.mutation();
+        population.push_back(p);
     }
 
-
-
-}
-
-void GeneticAlgorithm::createBasePopulation() {
-
-
-    population.resize(params.populationSize);
-
-    for (auto chrom : population){
-        std::cout << "A";
+    for (auto p : population){
+        p.printChromos();
     }
+
+    std::cout << population.size();
 }
+
+Population GeneticAlgorithm::createBasePopulation() {
+    Population base(params.populationSize);
+    return base;
+}
+
+bool GeneticAlgorithm::keepGoing() {
+    return false;
+}
+
+
 
 
 

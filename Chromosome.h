@@ -7,15 +7,37 @@
 
 
 #include <string>
+#include <vector>
 #include <list>
+#include <random>
+#include <algorithm>
+#include <cstdlib>
+#include <iostream>
+
 
 enum TURNCODE { LEFT = -1, FORWARD = 0, RIGHT = 1 };
 enum FACING { NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3 };
 enum HP { HYDROPHIL, HYDROPHOB };
 
 
+
+//Fisher–Yates shuffle
+template<class fwditer>
+fwditer random_unique(fwditer begin, fwditer end, size_t num_random) {
+    long left = std::distance(begin, end);
+    while (num_random--) {
+        fwditer r = begin;
+        std::advance(r, rand()%left);
+        std::swap(*begin, *r);
+        ++begin;
+        --left;
+    }
+    return begin;
+}
+
 struct Coordinate {
-    int x, y;   // (0,0)
+    int x = 0;
+    int y = 0;   // (0,0)
     FACING facing = NORTH;
     HP polarisation;
 
@@ -59,30 +81,30 @@ class Chromosome {
 
 public:
 
-
     Chromosome();
     void printCoordinates();
+    void process();
+    void createRandomTurnList();
+    void crossover(Chromosome& other);
+    void printTurns();
 
 
 private:
+    std::vector<std::pair<Coordinate, Coordinate>> pairs;
 
-    void createRandomTurnList();
-
-    void crossover(Chromosome chromosome);
     void crossover(int pos, Chromosome chromosome);
 
+    void walkPath();
     void calcFitness();
     double fitness;
 
+    int collisions = 0;
     std::list<TURNCODE> turnList;
-    std::list<Coordinate> path;
-
+    std::vector<Coordinate> path;
     void createCoordinatePath(Coordinate start);
+    bool isPair(Coordinate &first, Coordinate &secound);
 
 };
-
-
-
 
 /*
  *
