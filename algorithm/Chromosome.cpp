@@ -11,15 +11,17 @@ std::default_random_engine randomEngine(randomDevice2());
 std::uniform_int_distribution<int> uniform_dist(0, 2);
 
 
-Chromosome::Chromosome() { }
+Chromosome::Chromosome() {
+    id = idGlobal++;
+}
 
 
 
 void Chromosome::calcFitness() {
-    std::cout << "Fitness: " << pairs.size() << std::endl;
-    std::cout << "Collisions: " << collisions << std::endl;
+   // std::cout << "Fitness: " << pairs.size() << std::endl;
+   // std::cout << "Collisions: " << collisions << std::endl;
     for (auto pair : pairs){
-        std::cout << "Paar " << pair.first.representation() << " und " << pair.second.representation() << std::endl;
+        //std::cout << "Paar " << pair.first.representation() << " und " << pair.second.representation() << std::endl;
     }
 }
 
@@ -59,7 +61,7 @@ void Chromosome::printTurns() {
 
     for (auto turn : turnList){
 
-        std::cout << turn;
+        std::cout << turn << " ";
     }
     std::cout << "\n";
 }
@@ -102,11 +104,13 @@ void Chromosome::process() {
 
 void Chromosome::crossover(Chromosome &other) {
 
-    std::uniform_int_distribution<int> mutation(0, turnList.size());
-    int position =  5; // mutation(randomEngine);
+
+    std::uniform_int_distribution<int> crossover(0, turnList.size());
+    int position =  crossover(randomDevice2);
 
     auto list1 = this->turnList;
     auto list2 = other.turnList;
+
 
     auto it1 = list1.begin();
     std::advance(it1, position);
@@ -118,7 +122,7 @@ void Chromosome::crossover(Chromosome &other) {
 }
 
 
-
+int Chromosome::idGlobal = 0;
 
 
 

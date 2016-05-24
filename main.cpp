@@ -1,7 +1,7 @@
 #include <iostream>
 #include <list>
 
-#include "GeneticAlgorithm.h"
+#include "algorithm/GeneticAlgorithm.h"
 
 using namespace std;
 
@@ -20,23 +20,17 @@ std::string SEQ50 = "11010101011110100010001000010001000101111010101011";
 
 
 GeneticAlgorithmParams GeneticAlgorithm::params = {
-        SEQ20,
-        1,
-        10,
+        SEQ20, // sequence
+        4,
+        5,
         0.10,
         0.25,
         0.25
 };
 
 int main() {
-    GeneticAlgorithm geneticAlgorithm = GeneticAlgorithm();
-
+    GeneticAlgorithm geneticAlgorithm;
     geneticAlgorithm.run();
-
-
-    std::list<int> list1 = {0, 1, 2, 3, 4};
-    std::list<int> list2 = {5, 6, 7, 8, 9};
-
 
     return 0;
 }

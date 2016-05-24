@@ -16,6 +16,7 @@
 
 
 enum TURNCODE { LEFT = -1, FORWARD = 0, RIGHT = 1 };
+const char* Turncode_txt[] = {"LEFT", "FORWARD", "RIGHT" } ;
 enum FACING { NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3 };
 enum HP { HYDROPHIL, HYDROPHOB };
 
@@ -88,6 +89,11 @@ public:
     void crossover(Chromosome& other);
     void printTurns();
 
+    static int idGlobal;
+    int id = 0;
+
+    std::list<TURNCODE> turnList;
+
 
 private:
     std::vector<std::pair<Coordinate, Coordinate>> pairs;
@@ -99,7 +105,6 @@ private:
     double fitness;
 
     int collisions = 0;
-    std::list<TURNCODE> turnList;
     std::vector<Coordinate> path;
     void createCoordinatePath(Coordinate start);
     bool isPair(Coordinate &first, Coordinate &secound);

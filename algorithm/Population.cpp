@@ -17,7 +17,7 @@ void Population::crossover(double crossover_rate) {
     int crossover_count = (int) (chromosomes.size() * crossover_rate );
 
     std::cout << "crossover_count " << crossover_count << std::endl;
-    int num_random = crossover_count;
+    int num_random = 1;
     long left = std::distance(chromosomes.begin(), chromosomes.end());
     auto current = chromosomes.begin();
 
@@ -37,6 +37,8 @@ void Population::crossover(double crossover_rate) {
         ch1.crossover(ch2);
         ch1.process();
         ch2.process();
+
+
     }
 }
 
@@ -48,8 +50,10 @@ void Population::mutation() {
 
 void Population::printChromos() {
 
+
     for (auto chromo : chromosomes){
-        chromo.printCoordinates();
+        std::cout << chromo.id << ": ";
+        chromo.printTurns();
     }
     std::cout << chromosomes.size()<< std::endl;
 }
