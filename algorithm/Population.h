@@ -9,10 +9,7 @@
 #include <iostream>
 
 class Population {
-
-
 public:
-
 
     Population() { }
 
@@ -22,7 +19,7 @@ public:
             Chromosome chrom;
             chrom.createRandomTurnList();
             chrom.process();
-            chromosomes.push_back(chrom);
+            chromosomes.push_back(std::move(chrom));
         }
     }
 
@@ -31,20 +28,20 @@ public:
     }
 
     Population selection();
-    void crossover(double crossover_rate);
-
-    void mutation();
-
+    void crossover_selection(double crossover_rate);
+    void mutation(double);
+    void process();
     void printChromos();
+    void printBestCandidate();
 
-public:
+    double minFitness;
+    double maxFitness;
     double averageFitness;
+
+
 
 private:
     std::vector<Chromosome> chromosomes;
-
-
 };
-
 
 #endif //GENETICALGORITHM_POPULATION_H

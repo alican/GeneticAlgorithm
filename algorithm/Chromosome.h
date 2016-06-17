@@ -13,10 +13,9 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
-
+#include <cmath>
 
 enum TURNCODE { LEFT = -1, FORWARD = 0, RIGHT = 1 };
-const char* Turncode_txt[] = {"LEFT", "FORWARD", "RIGHT" } ;
 enum FACING { NORTH = 0, EAST = 1, SOUTH = 2, WEST = 3 };
 enum HP { HYDROPHIL, HYDROPHOB };
 
@@ -40,7 +39,7 @@ struct Coordinate {
     int x = 0;
     int y = 0;   // (0,0)
     FACING facing = NORTH;
-    HP polarisation;
+    //HP polarisation;
 
     std::string representation(){
         return "(" + std::to_string(x) + "," + std::to_string(y) + ")";
@@ -73,7 +72,6 @@ struct Coordinate {
                 x -= 1;
                 break;
         }
-
     }
 };
 
@@ -88,36 +86,41 @@ public:
     void createRandomTurnList();
     void crossover(Chromosome& other);
     void printTurns();
+    void mutate();
+    void printInfo();
 
     static int idGlobal;
     int id = 0;
 
-    std::list<TURNCODE> turnList;
+    bool operator< (const Chromosome& right) const {
+        return fitness < right.fitness;
+    }
+
+    double getFitness() const {
+        return fitness;
+    }
+
+    std::vector<TURNCODE> turnList;
+
+
+
 
 
 private:
     std::vector<std::pair<Coordinate, Coordinate>> pairs;
 
-    void crossover(int pos, Chromosome chromosome);
+    //void crossover(int pos, Chromosome chromosome);
 
     void walkPath();
+    void createCoordinatePath(Coordinate start);
     void calcFitness();
     double fitness;
-
     int collisions = 0;
-    std::vector<Coordinate> path;
-    void createCoordinatePath(Coordinate start);
+
+    bool changed = true;
+    std::vector<Coordinate> pathList;
     bool isPair(Coordinate &first, Coordinate &secound);
 
 };
-
-/*
- *
- * 0,0      0,1     0,2     0,3,    0,4
- * 1,0      1,1     1,2     1,3,    1,4
- * 2,0      2,1     2,2     2,3,    2,4
- * 3,0      3,1     3,2     3,3,    3,4
- *
- */
 
 #endif //GENETICALGORITHM_GENOTYPE_H

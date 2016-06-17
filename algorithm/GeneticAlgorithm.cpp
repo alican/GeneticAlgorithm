@@ -8,25 +8,29 @@
 void GeneticAlgorithm::run() {
 
     Population p = createBasePopulation();
-    population.push_back(p);
+    generations.push_back(p);
 
     double fitness = 0.001;
     int generation = 0;
 
     while(generation < params.generations){
-        // p.printChromos();
+        //p.printChromos();
         generation++;
         p = p.selection();
-        p.crossover(params.crossoverPercent);
-        p.mutation();
-        population.push_back(p);
+        p.crossover_selection(params.crossoverPercent);
+        p.mutation(params.mutationPercent);
+        p.process();
 
-    }
 
-    for (auto p : population){
-    }
+        generations.front().printBestCandidate();
 
-    std::cout << population.size();
+        std::cout << "Min Fitness: " << p.minFitness << std::endl;
+        std::cout << "Max Fitness: " << p.maxFitness << std::endl;
+
+        generations.push_back(p);
+     }
+
+    toJson();
 }
 
 Population GeneticAlgorithm::createBasePopulation() {
@@ -37,6 +41,13 @@ Population GeneticAlgorithm::createBasePopulation() {
 bool GeneticAlgorithm::keepGoing() {
     return false;
 }
+
+void GeneticAlgorithm::toJson() {
+    //json j_vec(generations);
+    //std::cout << j_vec << std::endl;
+}
+
+
 
 
 

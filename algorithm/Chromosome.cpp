@@ -5,6 +5,10 @@
 #include <iostream>
 #include "Chromosome.h"
 #include "GeneticAlgorithm.h"
+#include "../lib/json.hpp"
+
+using json = nlohmann::json;
+
 
 std::random_device randomDevice2;
 std::default_random_engine randomEngine(randomDevice2());
@@ -18,30 +22,35 @@ Chromosome::Chromosome() {
 
 
 void Chromosome::calcFitness() {
-   // std::cout << "Fitness: " << pairs.size() << std::endl;
-   // std::cout << "Collisions: " << collisions << std::endl;
-    for (auto pair : pairs){
-        //std::cout << "Paar " << pair.first.representation() << " und " << pair.second.representation() << std::endl;
+
+    std::cout << "pairs" << pairs.size() << std::endl;
+    std::cout << "collisions" << collisions << std::endl;
+    fitness = 1;
+    fitness += pairs.size() * 100;
+    if ((2^collisions) > 0){
+        fitness /= (2^collisions);
     }
+
+    std::cout << "fitness" << fitness << std::endl;
+
+
 }
 
 
 void Chromosome::createRandomTurnList() {
-
         for (auto character : GeneticAlgorithm::params.sequence ){
             int turn = uniform_dist(randomEngine) - 1;
             turnList.push_back((TURNCODE)turn);
         }
-    std::cout << "Fertig" << std::endl;
-
 }
 
 void Chromosome::createCoordinatePath(Coordinate start) {
+    pathList.clear();
     Coordinate current = start;
     for (auto turn: turnList){
         Coordinate next = current;
         next.turnTo(turn);
-        path.push_back(next);
+        pathList.push_back(next);
         current = next;
     }
 }
@@ -50,7 +59,7 @@ void Chromosome::createCoordinatePath(Coordinate start) {
 
 void Chromosome::printCoordinates() {
 
-    for (auto coordinate : path){
+    for (auto coordinate : pathList){
 
         std::cout << coordinate.representation();
     }
@@ -71,20 +80,27 @@ bool Chromosome::isPair(Coordinate &first, Coordinate &second) {
 }
 
 void Chromosome::walkPath() {
+
+    // reset collisions counter;
+    this->collisions = 0;
+    pairs.clear();
+
+
     Coordinate cord1;
     Coordinate cord2;
-    for (int i = 0; i < path.size(); i++){
-        cord1 =  path.at(i);
-        for(int j = i + 2; j < path.size(); j++){
-            cord2 = path.at(j);
+
+    for (size_t i = 0; i < pathList.size(); i++){
+        cord1 =  pathList.at(i);
+        for(size_t j = i + 2; j < pathList.size(); j++){
+            cord2 = pathList.at(j);
             if(cord1.x == cord2.x && cord1.y == cord2.y) {
                 collisions++;
             }
             if(GeneticAlgorithm::params.sequence.at(i) == '1' && GeneticAlgorithm::params.sequence.at(j)){
-                if (isPair(path.at(i), path.at(j))){
+                if (isPair(pathList.at(i), pathList.at(j))){
                     pairs.push_back(std::make_pair<Coordinate, Coordinate>(
-                            (Coordinate &&) path.at(i),
-                            (Coordinate &&) path.at(j))
+                            (Coordinate &&) pathList.at(i),
+                            (Coordinate &&) pathList.at(j))
                     );
                 }
             }
@@ -93,50 +109,72 @@ void Chromosome::walkPath() {
 }
 
 void Chromosome::process() {
-    path.clear();
-    pairs.clear();
-    collisions = 0;
-    Coordinate start;
-    createCoordinatePath(start);
-    walkPath();
-    calcFitness();
+
+    if (changed){
+        Coordinate start;
+        createCoordinatePath(start);
+        walkPath();
+        calcFitness();
+
+        changed = false;
+    }
+
 }
 
-void Chromosome::crossover(Chromosome &other) {
+void Chromosome::crossover(Chromosome& other) {
 
-
-    std::uniform_int_distribution<int> crossover(0, turnList.size());
+    std::uniform_int_distribution<int> crossover(1, turnList.size()-1);
     int position =  crossover(randomDevice2);
 
-    auto list1 = this->turnList;
-    auto list2 = other.turnList;
-
+    std::vector<TURNCODE>& list1 = this->turnList;
+    std::vector<TURNCODE>& list2 = other.turnList;
 
     auto it1 = list1.begin();
     std::advance(it1, position);
     auto it2 = list2.begin();
     std::advance(it2, position);
 
-    list1.splice(it1, list2, it2, list2.end());
-    list2.splice(list2.end(), list1, it1, list1.end());
+    std::vector<TURNCODE> nlist1;
+    std::vector<TURNCODE> nlist2;
+    nlist1.insert(nlist1.begin(), list1.begin(), it1);
+    nlist1.insert(nlist1.end(), it2, list2.end());
+    nlist2.insert(nlist2.begin(), list2.begin(), it2);
+    nlist2.insert(nlist2.end(), it1, list1.end());
+
+    list1 = std::move(nlist1);
+    list2 = std::move(nlist2);
+
+
+    // Mark as changed for recalculation of fitness, collusion, path etc.
+    this->changed = true;
+    other.changed = true;
 }
+
 
 
 int Chromosome::idGlobal = 0;
 
+void Chromosome::mutate() {
+    std::uniform_int_distribution<int> randomAccess(0, (int) turnList.size()-1);
+    std::uniform_int_distribution<int> randomTurnCode(0, 2);
+    int position = randomAccess(randomDevice2) ;
+    int mutation = randomTurnCode(randomDevice2) -1 ;
+    turnList.at(position) = (TURNCODE) mutation;
 
+    // Mark as changed for recalculation of fitness, collusion, path etc.
+    this->changed = true;
+}
 
+void Chromosome::printInfo() {
+    std::cout << "### Bester Kandidat ###" << std::endl;
+    std::cout << "Pairs: " << pairs.size() << std::endl;
+    std::cout << "Collisions: " << collisions << std::endl;
+    std::cout << "Fitness: " << fitness << std::endl;
+    std::cout << "#######################" << std::endl;
 
+    json j_vec(pathList);
+    std::cout << j_vec << std::endl;
 
-
-
-
-
-
-
-
-
-
-
+}
 
 

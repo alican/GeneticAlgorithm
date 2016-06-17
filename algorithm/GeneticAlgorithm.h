@@ -28,9 +28,11 @@ public:
     void run();
     void showTurnList();
 
+    void toJson();
+
 private:
     Population createBasePopulation();
-    std::vector<Population> population;
+    std::vector<Population> generations;
 
     bool keepGoing();
 };
