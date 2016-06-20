@@ -27,12 +27,12 @@ std::string SEQ50 = "11010101011110100010001000010001000101111010101011";
 
 
 GeneticAlgorithmParams GeneticAlgorithm::params = {
-        SEQ20,  // sequence
-        10,     // populationSize
-        10,     // generations
+        SEQ50,  // sequence
+        100,     // populationSize
+        300,     // generations
         0.10,   // elitePercent
         0.25,   // crossoverPercent
-        0.01    // mutationPercent
+        0.15    // mutationPercent
 };
 
 std::ostream& operator<<(std::ostream& ostr, const std::vector<std::string>& list) {

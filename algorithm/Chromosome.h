@@ -92,6 +92,8 @@ public:
     static int idGlobal;
     int id = 0;
 
+    void setId();
+
     bool operator< (const Chromosome& right) const {
         return fitness < right.fitness;
     }

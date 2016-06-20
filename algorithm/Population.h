@@ -7,6 +7,9 @@
 #include "Chromosome.h"
 #include <vector>
 #include <iostream>
+#include "../lib/json.hpp"
+
+using json = nlohmann::json;
 
 class Population {
 public:
@@ -19,6 +22,7 @@ public:
             Chromosome chrom;
             chrom.createRandomTurnList();
             chrom.process();
+            chrom.setId();
             chromosomes.push_back(std::move(chrom));
         }
     }
@@ -28,8 +32,8 @@ public:
     }
 
     Population selection();
-    void crossover_selection(double crossover_rate);
     void mutation(double);
+    void crossover_selection(double crossover_rate);
     void process();
     void printChromos();
     void printBestCandidate();
@@ -38,6 +42,8 @@ public:
     double maxFitness;
     double averageFitness;
 
+
+    json toJson();
 
 
 private:

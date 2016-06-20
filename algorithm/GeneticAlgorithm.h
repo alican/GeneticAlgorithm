@@ -7,6 +7,9 @@
 #include "Chromosome.h"
 #include "Population.h"
 
+#include "../lib/json.hpp"
+
+using json = nlohmann::json;
 
 struct GeneticAlgorithmParams{
     const std::string sequence;
@@ -28,7 +31,8 @@ public:
     void run();
     void showTurnList();
 
-    void toJson();
+    void resultAsJson();
+    void resultToFile();
 
 private:
     Population createBasePopulation();

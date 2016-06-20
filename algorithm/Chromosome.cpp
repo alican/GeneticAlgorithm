@@ -5,9 +5,7 @@
 #include <iostream>
 #include "Chromosome.h"
 #include "GeneticAlgorithm.h"
-#include "../lib/json.hpp"
 
-using json = nlohmann::json;
 
 
 std::random_device randomDevice2;
@@ -23,15 +21,19 @@ Chromosome::Chromosome() {
 
 void Chromosome::calcFitness() {
 
-    std::cout << "pairs" << pairs.size() << std::endl;
-    std::cout << "collisions" << collisions << std::endl;
+   // std::cout << "pairs" << pairs.size() << std::endl;
+   // std::cout << "collisions" << collisions << std::endl;
+
     fitness = 1;
     fitness += pairs.size() * 100;
-    if ((2^collisions) > 0){
-        fitness /= (2^collisions);
+    if ((collisions) > 0){
+        if (collisions == 1){
+            collisions++;
+        }
+        fitness /= (collisions*collisions);
     }
 
-    std::cout << "fitness" << fitness << std::endl;
+   // std::cout << "fitness" << fitness << std::endl;
 
 
 }
@@ -115,7 +117,6 @@ void Chromosome::process() {
         createCoordinatePath(start);
         walkPath();
         calcFitness();
-
         changed = false;
     }
 
@@ -147,7 +148,9 @@ void Chromosome::crossover(Chromosome& other) {
 
     // Mark as changed for recalculation of fitness, collusion, path etc.
     this->changed = true;
+    this->setId();
     other.changed = true;
+    other.setId();
 }
 
 
@@ -163,6 +166,7 @@ void Chromosome::mutate() {
 
     // Mark as changed for recalculation of fitness, collusion, path etc.
     this->changed = true;
+    this->setId();
 }
 
 void Chromosome::printInfo() {
@@ -170,11 +174,18 @@ void Chromosome::printInfo() {
     std::cout << "Pairs: " << pairs.size() << std::endl;
     std::cout << "Collisions: " << collisions << std::endl;
     std::cout << "Fitness: " << fitness << std::endl;
+    std::cout << "ID: " << id << std::endl;
     std::cout << "#######################" << std::endl;
 
-    json j_vec(pathList);
+    json j_vec(turnList);
     std::cout << j_vec << std::endl;
 
 }
+
+void Chromosome::setId() {
+    this->id = ++idGlobal;
+}
+
+
 
 
