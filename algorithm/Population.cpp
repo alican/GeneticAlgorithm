@@ -6,10 +6,14 @@
 #include <functional>
 #include "Population.h"
 
-Population Population::selection() {
+
+
+Population Population::selection(int generation) {
 
     std::default_random_engine generator;
-    std::exponential_distribution<double> distribution(0.5);
+
+    float ex = (float) (0.5 + (generation / 300.0));
+    std::exponential_distribution<double> distribution(ex);
 
     std::vector<Chromosome> new_chromosomes;
 
@@ -25,12 +29,81 @@ Population Population::selection() {
     return Population(new_chromosomes);
 }
 
+
+Population Population::tournament_selection(int generation) {
+
+    std::vector<Chromosome> new_chromosomes;
+
+
+    //Fisher-Yates shuffle
+    int t_rounds = (int) chromosomes.size();
+    //std::cout << crossover_count << std::endl;
+
+    long left = std::distance(chromosomes.begin(), chromosomes.end());
+    auto current = chromosomes.begin();
+
+    while (t_rounds) {
+        auto rI1 = current;
+        auto rI2 = current;
+        std::advance(rI1, rand() % left);
+        std::advance(rI2, rand() % left);
+        //std::swap(*current, *r);
+        Chromosome &ch1 = (*(rI1));
+        Chromosome &ch2 = (*(rI2));
+
+        Chromosome winner = (ch1.getFitness() > ch2.getFitness()) ? ch1 : ch2;
+        new_chromosomes.push_back(std::move(winner));
+
+        --t_rounds;
+    }
+
+/*
+    static const float t = 0.6f;
+    std::uniform_int_distribution<int> uniform_dist(0, chromosomes.size());
+
+    for (size_t i = 0; i < chromosomes.size(); ++i) {
+        Chromosome* c1 = nullptr;
+        while (!c1){
+            int index = uniform_dist(randomEngine) - 1;
+
+            Chromosome& c = chromosomes[index];
+            if (&c != c1) {
+                c1 = &c;
+            }
+        }
+
+        Chromosome* c2 = nullptr;
+        while (!c2) {
+            int index = uniform_dist(randomEngine) - 1;
+            Chromosome& c = chromosomes[index];
+            if (&c != c2) {
+                c2 = &c;
+            }
+        }
+
+
+
+        float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+        if (r >= t) {
+            winner = *c2;
+        }
+
+        new_chromosomes.push_back(std::move(winner));
+
+    }
+*/
+    return Population(new_chromosomes);
+
+ }
+
+
+
 void Population::crossover_selection(double crossover_rate) {
 
     // 0.25 der chromosome.
     //Fisher-Yates shuffle
     int crossover_count = (int) (chromosomes.size() * crossover_rate );
-    std::cout << crossover_count << std::endl;
+    //std::cout << crossover_count << std::endl;
 
     long left = std::distance(chromosomes.begin(), chromosomes.end());
     auto current = chromosomes.begin();
@@ -117,3 +190,42 @@ json Population::toJson() {
     j["averageFitness"] = averageFitness;
     return j;
 }
+
+void Population::calcDiversity() {
+
+
+    size_t orientationCount = chromosomes.front().turnList.size();
+
+    int populationSize = (int) chromosomes.size();
+
+    uint64_t sum = 0;
+
+    for (size_t i = 0; i < populationSize; ++i)
+    {
+        for (size_t j = i + 1; j < populationSize; ++j)
+        {
+            const Chromosome & c1 = chromosomes[i];
+            const Chromosome & c2 = chromosomes[j];
+
+            for (size_t pos = 0; pos < orientationCount; ++pos)
+            {
+                if (c1.turnList[pos] != c2.turnList[pos])
+                {
+                    ++sum;
+                }
+            }
+        }
+    };
+
+    uint64_t numComparisons = (uint64_t) ((populationSize * populationSize / 2) - (populationSize / 2));
+
+    uint64_t total = numComparisons * orientationCount;
+
+    diversity = static_cast<float>(static_cast<double>(sum) / total);
+    diversity *= 100.0f;
+
+    diversity = std::roundf(diversity);
+
+}
+
+

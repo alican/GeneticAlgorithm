@@ -40,7 +40,7 @@ void Chromosome::calcFitness() {
 
 
 void Chromosome::createRandomTurnList() {
-        for (auto character : GeneticAlgorithm::params.sequence ){
+        for (int i = 0; i  < GeneticAlgorithm::params.sequence.length() - 1; i++ ){
             int turn = uniform_dist(randomEngine) - 1;
             turnList.push_back((TURNCODE)turn);
         }
@@ -49,6 +49,7 @@ void Chromosome::createRandomTurnList() {
 void Chromosome::createCoordinatePath(Coordinate start) {
     pathList.clear();
     Coordinate current = start;
+    pathList.push_back(current);
     for (auto turn: turnList){
         Coordinate next = current;
         next.turnTo(turn);
@@ -179,6 +180,7 @@ void Chromosome::printInfo() {
 
     json j_vec(turnList);
     std::cout << j_vec << std::endl;
+    printCoordinates();
 
 }
 
