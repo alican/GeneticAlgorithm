@@ -31,23 +31,29 @@ public:
         chromosomes = selection;
     }
 
-    Population selection();
+    Population selection(int);
     void mutation(double);
     void crossover_selection(double crossover_rate);
     void process();
     void printChromos();
     void printBestCandidate();
 
+    void calcDiversity();
+
     double minFitness;
     double maxFitness;
     double averageFitness;
 
+    float diversity;
+
 
     json toJson();
 
+    Population tournament_selection(int generation);
 
 private:
     std::vector<Chromosome> chromosomes;
+
 };
 
 #endif //GENETICALGORITHM_POPULATION_H

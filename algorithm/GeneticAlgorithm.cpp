@@ -19,19 +19,20 @@ void GeneticAlgorithm::run() {
     while(generation < params.generations){
         //p.printChromos();
         generation++;
-        p = p.selection();
+        p = p.tournament_selection(generation);
         p.crossover_selection(params.crossoverPercent);
         p.mutation(params.mutationPercent);
         p.process();
 
-
-        p.printBestCandidate();
-
+        p.calcDiversity();
+        //p.printBestCandidate();
        // std::cout << "Min Fitness: " << p.minFitness << std::endl;
        // std::cout << "Max Fitness: " << p.maxFitness << std::endl;
 
         generations.push_back(p);
      }
+
+    generations.back().printBestCandidate();
 
     //resultToFile();
     resultAsJson();
@@ -51,18 +52,21 @@ void GeneticAlgorithm::resultAsJson() {
     json min;
     json max;
     json average;
+    json diversity;
 
     int generation = 0;
     for (auto p : generations){
         min.push_back(json::object({{"x", generation},{"y", p.minFitness}}));
         max.push_back(json::object({{"x", generation},{"y", p.maxFitness}}));
         average.push_back(json::object({{"x", generation},{"y", p.averageFitness}}));
+        diversity.push_back(json::object({{"x", generation},{"y", p.diversity*100}}));
         generation++;
         //results.push_back(p.toJson());
     }
     results["min"] =  min;
     results["max"] =  max;
     results["average"] =  average;
+    results["diversity"] =  diversity;
 
     std::ofstream myfile ("C:\\Users\\alican\\ClionProjects\\GeneticAlgorithm\\viewer\\results.json");
     if (myfile.is_open())
