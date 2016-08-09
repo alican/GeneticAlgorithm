@@ -7,4 +7,4 @@ Genetic Algorithm for Predicting Protein Folding in the 2D HP Model
 
 # best candidate
 
-![best protein folding candidate](https://raw.githubusercontent.com/alican/GeneticAlgorithm/master/viewer/ga_protein.PNG "best protein folding candidate")
+![best protein folding candidate](https://github.com/alican/GeneticAlgorithm/blob/master/viewer/ga_protein.PNG "best protein folding candidate")
